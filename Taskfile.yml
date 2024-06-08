@@ -1,0 +1,20 @@
+tasks:
+  migrate_up:
+    desc: migrate upper
+    cmd: go run ./cmd/migrator/migrator.go --storage-path=postgresql://postgres:157315@localhost:5432/greenKamchatka --migrations-path=./migrations --direction=up
+  migrate_down:
+    desc: migrate down
+    cmd: go run ./cmd/migrator/migrator.go --storage-path=postgresql://postgres:157315@localhost:5432/greenKamchatka --migrations-path=./migrations --direction=down
+  refresh_migrations:
+    desc: down and up migrations
+    cmds:
+      - go run ./cmd/migrator/migrator.go --storage-path=postgresql://postgres:157315@localhost:5432/greenKamchatka --migrations-path=./migrations --direction=down
+      - go run ./cmd/migrator/migrator.go --storage-path=postgresql://postgres:157315@localhost:5432/greenKamchatka --migrations-path=./migrations --direction=up
+  run:
+    vars:
+      config: ./config/config.yaml
+
+    desc: run application
+    cmd: go run ./cmd/main.go --config={{.config}}
+
+version: '3'
