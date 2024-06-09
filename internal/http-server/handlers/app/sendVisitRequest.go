@@ -7,7 +7,7 @@ import (
 )
 
 type RequestAdder interface {
-	AddVisitRequest(data RequestData) (int64, error)
+	AddVisitRequest(data RequestData) error
 }
 
 //type RequestData struct {
@@ -32,7 +32,9 @@ type RequestAdder interface {
 //}
 
 type User struct {
-	FCs         string `json:"FCs"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	MiddleName  string `json:"middle_name"`
 	DateOfBirth string `json:"date_of_birth"`
 	Citizenship string `json:"sitizenship"`
 	Region      string `json:"region"`
@@ -53,13 +55,15 @@ type RequestData struct {
 }
 
 type ResponseData struct {
-	ID int64 `json:"request_id"`
+	Status string `json:"status"`
 }
 
 func SendVisitRequest(log *slog.Logger, adder RequestAdder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var data RequestData
-		var resp ResponseData
+		resp := ResponseData{
+			Status: "Failed",
+		}
 		const op = "internal.handlers.app.sendVisitRequest"
 		log = log.With("operation", op)
 		err := render.DecodeJSON(r.Body, &data)
@@ -75,15 +79,14 @@ func SendVisitRequest(log *slog.Logger, adder RequestAdder) http.HandlerFunc {
 			render.JSON(w, r, resp)
 			return
 		}
-		ID, err := adder.AddVisitRequest(data)
+		err = adder.AddVisitRequest(data)
 		if err != nil {
 			log.Error("failed to add visit request", err.Error())
 			render.Status(r, http.StatusInternalServerError)
 			render.JSON(w, r, resp)
 			return
 		}
-
-		resp.ID = ID
+		resp.Status = "Success"
 		render.JSON(w, r, resp)
 	}
 }

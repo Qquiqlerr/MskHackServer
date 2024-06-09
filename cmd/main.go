@@ -25,6 +25,10 @@ func main() {
 
 	router.Route("/api/mapp", func(r chi.Router) {
 		r.Get("/routes_all", app.RoutesAll(log, storage, cfg.Addr))
+		r.Post("/visit_request", app.SendVisitRequest(log, storage))
+		r.Get("/visit_request", app.GetVisitRequestStatus(log, storage))
+		r.Post("/send_report", app.SendReport(log, storage))
+		r.Get("/get_all_reports", app.GetAllReports(log, storage))
 	})
 
 	srv := &http.Server{
