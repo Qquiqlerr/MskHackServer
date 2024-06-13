@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"greenkmchSever/internal/config"
 	"greenkmchSever/internal/http-server/handlers/app"
 	"greenkmchSever/internal/http-server/handlers/portal"
@@ -26,10 +27,16 @@ func main() {
 		log.Error("Failed to initialize storage", err.Error())
 		os.Exit(1)
 	}
+	cors := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowCredentials: true,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	})
 
-	// Create a new router instance
 	router := chi.NewRouter()
-
+	router.Use(cors.Handler)
 	// Serve static files from the "./static" directory
 	fs := http.FileServer(http.Dir("./static"))
 	router.Handle("/static/*", http.StripPrefix("/static", fs))
