@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecological Monitoring</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Ecological Monitoring in Kamchatka Krai</h1>
+</header>
+
+<main>
+    <div class="request-section">
+        <h2>Выберите маршрут</h2>
+        <div class="request-list">
+            <ul id="routesList">
+                <!-- Placeholder for the list items -->
+            </ul>
+        </div>
+    </div>
+    <div class="back-button" onclick="goBack()">
+        <p>Назад</p>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2023 Ecological Monitoring. All rights reserved.</p>
+</footer>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        // Define the API URL
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const apiUrl = `/api/portal/get_all_routes?id=${id}`;
+        // Fetch the data from the API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Get the list of routes
+                const routes = data.routes;
+
+                // Create the container element for the list
+                const container = document.getElementById('routesList');
+
+                // Loop through the list and create the route items
+                routes.forEach(route => {
+                    // Create a list item element for the route
+                    const listItem = document.createElement('li');
+
+                    // Set the name of the route
+                    const name = document.createElement('span');
+                    name.textContent = route.name;
+                    name.className = 'oopt-name';
+                    listItem.appendChild(name);
+                    listItem.addEventListener('click', () => {
+                        window.location.href = `/portal/info/page1`;
+                        localStorage.setItem('route_id', route.id);
+                    });
+                    // Add the list item to the container
+                    container.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+        // Navigates to the previous page in the window's history.
+
+    });
+</script>
+</body>
+</html>

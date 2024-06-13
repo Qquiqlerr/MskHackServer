@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page 2</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Потенциальная рекреационная емкость</h1>
+</header>
+<main>
+    <div class="squares-container">
+        <div class="square">1</div>
+        <div class="square">2</div>
+        <div class="square">3</div>
+    </div>
+    <div class="content">
+        <h2>Добавочные коэффициенты:</h2>
+        <div id="coefficients">
+            <input type="number" step="0.01">
+        </div>
+        <button onclick="addCoefficient()">Добавить еще</button>
+        <button onclick="deleteInput()">Удалить</button>
+        <button onclick="saveAndNext()">Далее</button>
+    </div>
+    <div class="back-button" onclick="goBack()">
+        <p>Назад</p>
+    </div>
+</main>
+<script>
+    function deleteInput() {
+        const inputs = document.getElementById('coefficients').getElementsByTagName('input');
+        if (inputs.length > 0) {
+            document.getElementById('coefficients').removeChild(inputs[inputs.length - 1]);
+        }
+    }
+    function goBack() {
+        window.history.back();
+    }
+    function addCoefficient() {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.step = '0.01';
+        document.getElementById('coefficients').appendChild(input);
+    }
+
+    function saveAndNext() {
+        const bccData = JSON.parse(localStorage.getItem('bccData'));
+        const cfInputs = document.getElementById('coefficients').getElementsByTagName('input');
+        const cfValues = Array.from(cfInputs).map(input => parseFloat(input.value));
+
+        const pccData = {
+            BCC: bccData.BCC,
+            cf: cfValues
+        };
+        localStorage.setItem('pccData', JSON.stringify(pccData));
+        window.location.href = `/portal/info/page3`;
+    }
+    function fillSquares(pageNumber) {
+        const squares = document.querySelectorAll('.square');
+
+        squares.forEach((square, index) => {
+            if (index < pageNumber) {
+                square.classList.add('filled');
+            } else {
+                square.classList.remove('filled');
+            }
+        });
+    }
+    fillSquares(2);
+</script>
+</body>
+</html>

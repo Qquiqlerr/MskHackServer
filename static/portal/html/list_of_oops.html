@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecological Monitoring</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Ecological Monitoring in Kamchatka Krai</h1>
+</header>
+<main>
+    <div class="panel-section">
+        <nav>
+            <ul>
+                <li><a href="#">Enter Information</a></li>
+                <li><a href="/portal/troubles">Environmental Issues</a></li>
+                <li><a href="#">Grant Access</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="request-section">
+        <h2>Выберите ООПТ</h2>
+        <div class="request-list">
+            <ul id="troublesList">
+                <!-- Placeholder for the list items -->
+            </ul>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2023 Ecological Monitoring. All rights reserved.</p>
+</footer>
+<script>
+    function redirectToRoutes(id) {
+        window.location.href = `/portal/list_of_routes?id=${id}`;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        // Define the API URL
+        const apiUrl = '/api/portal/get_all_oopts';
+
+        // Fetch the data from the API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Get the list of OOPTs
+                const oopts = data.oopts;
+
+                // Create the container element for the list
+                const container = document.getElementById('troublesList');
+
+                // Loop through the list and create the rounded tiles
+                oopts.forEach(oopt => {
+                    // Create the tile element
+                    const tile = document.createElement('div');
+                    tile.classList.add('oopt-tile');
+                    tile.dataset.id = oopt.id;
+
+                    // Set the name of the OOPT
+                    const name = document.createElement('span');
+                    name.textContent = oopt.name;
+                    name.className = 'oopt-name';
+                    tile.appendChild(name);
+                    tile.addEventListener('click', () => {
+                        redirectToRoutes(oopt.id);
+                    });
+                    // Create a list item element for the tile
+                    const listItem = document.createElement('li');
+                    listItem.appendChild(tile);
+
+                    // Add the list item to the container
+                    container.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    });
+</script>
+</body>
+</html>

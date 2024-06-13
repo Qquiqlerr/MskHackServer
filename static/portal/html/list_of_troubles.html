@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecological Monitoring</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Ecological Monitoring in Kamchatka Krai</h1>
+</header>
+
+<main>
+    <div class="panel-section">
+        <nav>
+            <ul>
+                <li><a href="/portal/list_of_oopts">Enter Information</a></li>
+                <li><a href="#">Environmental Issues</a></li>
+                <li><a href="#">Grant Access</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="request-section">
+        <h2>List of Troubles</h2>
+        <div class="request-list">
+
+            <table id="problemsTable" class="styled-table">
+                <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Problem ID</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2023 Ecological Monitoring. All rights reserved.</p>
+</footer>
+
+<div id="modal" class="modal">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <p>Изменить статус проблемы</p>
+        <div class="popup-buttons">
+            <button class="resolved" id="resolved">Решено</button>
+            <button class="denied" id="denied">Отказано</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const apiUrl = '/api/portal/get_all_problems';
+        const modal = document.getElementById('modal');
+        const span = document.querySelector('.close');
+        let currentProblemId = null;
+        async function fetchProblems() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const data = await response.json();
+                displayProblems(data.problems);
+            } catch (error) {
+                console.error('Fetch error:', error);
+                const requestListDiv = document.querySelector('.request-list');
+                requestListDiv.innerText = 'Ошибка при загрузке данных.';
+            }
+        }
+
+        function displayProblems(problems) {
+            const tableBody = document.querySelector('#problemsTable tbody');
+            tableBody.innerHTML = '';
+
+            problems.forEach(problem => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${problem.type}</td>
+                <td><a href="#" class="problem-id" data-id="${problem.Id}">${problem.Id}</a></td>
+                <td>${problem.status}</td>
+                <td>${problem.comment}</td>
+            `;
+                tableBody.appendChild(row);
+            });
+
+            const problemIds = document.querySelectorAll('.problem-id');
+            problemIds.forEach(id => {
+                id.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    currentProblemId = event.target.dataset.id;
+                    modal.style.display = 'flex';
+                });
+            });
+            span.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            document.getElementById('resolved').addEventListener('click', () => {
+                fetch('/api/portal/update_problem', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: parseInt(currentProblemId), new_status: 'Устранено' }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to mark the problem as resolved.');
+                        }
+                        console.log('Problem ID:', currentProblemId, 'marked as resolved.');
+                        modal.style.display = 'none';
+                        fetchProblems()
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+            document.getElementById('denied').addEventListener('click', () => {
+                console.log(JSON.stringify({ id: currentProblemId, new_status: 'Отклонено' }))
+                fetch('/api/portal/update_problem', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: parseInt(currentProblemId), new_status: 'Отклонено' }),
+                })
+
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to mark the problem as rejected.');
+                        }
+                        console.log('Problem ID:', currentProblemId, 'marked as rejected.');
+                        modal.style.display = 'none';
+                        fetchProblems()
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+        }
+
+
+
+        fetchProblems();
+    });
+
+</script>
+</body>
+</html>

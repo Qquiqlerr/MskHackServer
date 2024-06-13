@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page 1</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Базовая рекреационная емкость</h1>
+</header>
+<main>
+    <div class="squares-container">
+        <div class="square">1</div>
+        <div class="square">2</div>
+        <div class="square">3</div>
+    </div>
+    <div class="content">
+        <h2>Введите данные:</h2>
+        <label>Длина однодневного туристического маршрута или однодневного участка многодневного туристического маршрута, км <input type="number" id="dt" step="0.01"></label>
+        <label>Оптимальное расстояние между группами на участке туристического маршрута, км <input type="number" id="dg" step="0.01"></label>
+        <label>Длина светового дня или количество времени когда туристический маршрут доступен для посетителей, часов <input type="number" id="ts" step="0.01"></label>
+        <label>Среднее время прохождения участка туристического маршрута с учетом остановок, часов <input type="number" id="td" step="0.01"></label>
+        <label>Среднее количество человек в группе(включая сопровождающих), чел <input type="number" id="gs" step="0.01"></label>
+        <label>Количество дней пребывания посетителей на туристском маршруте, единиц <input type="number" id="t" step="0.01"></label>
+        <button onclick="collectData()">Далее</button>
+    </div>
+    <div class="back-button" onclick="goBack()">
+        <p>Назад</p>
+    </div>
+</main>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    function collectData() {
+        const data = {
+            BCC: {
+                dt: parseFloat(document.getElementById('dt').value),
+                dg: parseFloat(document.getElementById('dg').value),
+                ts: parseFloat(document.getElementById('ts').value),
+                td: parseFloat(document.getElementById('td').value),
+                gs: parseFloat(document.getElementById('gs').value),
+                p: parseInt(localStorage.getItem('route_id')),
+                t: parseFloat(document.getElementById('t').value)
+            }
+        };
+        localStorage.setItem('bccData', JSON.stringify(data));
+        window.location.href = `/portal/info/page2`;
+    }
+    function fillSquares(pageNumber) {
+        const squares = document.querySelectorAll('.square');
+
+        squares.forEach((square, index) => {
+            if (index < pageNumber) {
+                square.classList.add('filled');
+            } else {
+                square.classList.remove('filled');
+            }
+        });
+    }
+
+
+    fillSquares(1); // Заполнение первой страницы
+</script>
+</body>
+</html>

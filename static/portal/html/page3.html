@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page 3</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Предельно допустимая рекреационная емкость</h1>
+</header>
+<main>
+    <div class="squares-container">
+        <div class="square">1</div>
+        <div class="square">2</div>
+        <div class="square">3</div>
+    </div>
+    <div class="content">
+        <h2>Коэффициент управленческой емкости, долей от единицы:</h2>
+        <input type="number" id="mc" step="0.01">
+        <button onclick="saveAndSubmit()">Отправить</button>
+    </div>
+</main>
+<script>
+    function saveAndSubmit() {
+        const pccData = JSON.parse(localStorage.getItem('pccData'));
+        const mcValue = parseFloat(document.getElementById('mc').value);
+
+        const rccData = {
+            PCC: pccData,
+            mc: mcValue
+        };
+        const finalData = {
+            route: {
+                id: localStorage.getItem('route_id'),
+                RCC: rccData
+            }
+        };
+        console.log(JSON.stringify(finalData, null, 2));
+        // Здесь можно отправить данные на сервер или сохранить их другим способом
+        const apiUrl = 'your_api_url_here';
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(finalData)
+        })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    function fillSquares(pageNumber) {
+        const squares = document.querySelectorAll('.square');
+
+        squares.forEach((square, index) => {
+            if (index < pageNumber) {
+                square.classList.add('filled');
+            } else {
+                square.classList.remove('filled');
+            }
+        });
+    }
+    fillSquares(3);
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
 	"greenkmchSever/internal/http-server/handlers/app"
+	"greenkmchSever/internal/http-server/handlers/portal"
 	"strconv"
 	"strings"
 	"time"
@@ -64,8 +65,8 @@ func (s *Storage) AddVisitRequest(data app.RequestData) error {
 
 	if len(data.Users) == 1 {
 		GroupID = -1
-		_, err = s.db.Exec(`INSERT INTO visit_permits (status, requested_at, route_id, visit_date, group_id, visit_reason, visit_format, first_name, last_name, middle_name, citizenship, registration_region, is_male, passport, email, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
-			1, time.Now(), data.RouteID, data.VisitDate, GroupID, ReasonID, FormatOfVisitID, data.Users[0].FirstName, data.Users[0].LastName, data.Users[0].MiddleName, data.Users[0].Citizenship, data.Users[0].Region, data.Users[0].IsMale, data.Users[0].Passport, data.Users[0].Email, data.Users[0].Phone,
+		_, err = s.db.Exec(`INSERT INTO visit_permits (status, requested_at, route_id, visit_date, group_id, visit_reason, visit_format, first_name, last_name, middle_name, citizenship, registration_region, is_male, passport, email, phone, date_of_birth) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,$17)`,
+			1, time.Now(), data.RouteID, data.VisitDate, GroupID, ReasonID, FormatOfVisitID, data.Users[0].FirstName, data.Users[0].LastName, data.Users[0].MiddleName, data.Users[0].Citizenship, data.Users[0].Region, data.Users[0].IsMale, data.Users[0].Passport, data.Users[0].Email, data.Users[0].Phone, data.Users[0].DateOfBirth,
 		)
 
 	} else {
@@ -75,8 +76,8 @@ func (s *Storage) AddVisitRequest(data app.RequestData) error {
 		}
 		for _, user := range data.Users {
 			var ID int64
-			err = s.db.QueryRow(`INSERT INTO visit_permits (status, requested_at, route_id, visit_date, group_id, visit_reason, visit_format, first_name, last_name, middle_name, citizenship, registration_region, is_male, passport, email, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`,
-				1, time.Now(), data.RouteID, data.VisitDate, GroupID, ReasonID, FormatOfVisitID, user.FirstName, user.LastName, user.MiddleName, user.Citizenship, user.Region, user.IsMale, user.Passport, user.Email, user.Phone,
+			err = s.db.QueryRow(`INSERT INTO visit_permits (status, requested_at, route_id, visit_date, group_id, visit_reason, visit_format, first_name, last_name, middle_name, citizenship, registration_region, is_male, passport, email, phone,date_of_birth) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,$17) RETURNING id`,
+				1, time.Now(), data.RouteID, data.VisitDate, GroupID, ReasonID, FormatOfVisitID, user.FirstName, user.LastName, user.MiddleName, user.Citizenship, user.Region, user.IsMale, user.Passport, user.Email, user.Phone, user.DateOfBirth,
 			).Scan(&ID)
 			if err != nil {
 				return errors.Errorf("%s: failed to insert visit request: %s", op, err)
@@ -139,4 +140,70 @@ func (s *Storage) GetAllReports() ([]app.ReportCutted, error) {
 		Reports = append(Reports, report)
 	}
 	return Reports, nil
+}
+
+func (s *Storage) GetProblems() (portal.Problems, error) {
+	const op = "storage.postgres.getAllProblems"
+	var problems portal.Problems
+	rows, err := s.db.Query("SELECT r.id, rt.name, rs.name, comment from reports as r join reports_statuses as rs on r.statusID = rs.id  join type_of_reports as rt on r.type = rt.id where r.statusID = 1")
+	if err != nil {
+		return problems, errors.Errorf("%s - %s", op, err.Error())
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var problem portal.Problem
+		err = rows.Scan(&problem.Id, &problem.Type, &problem.Status, &problem.Comment)
+		if err != nil {
+			return problems, errors.Errorf("%s: failed to scan problem: %s", op, err)
+		}
+		problems.Problems = append(problems.Problems, problem)
+	}
+	return problems, nil
+}
+
+func (s *Storage) UpdateProblem(id int64, newStatus string) error {
+	const op = "storage.postgres.updateProblem"
+	_, err := s.db.Exec("UPDATE reports SET statusID = (SELECT id FROM reports_statuses WHERE name = $1) WHERE id = $2", newStatus, id)
+	if err != nil {
+		return errors.Errorf("%s: failed to update problem: %s", op, err)
+	}
+	return nil
+}
+
+func (s *Storage) GetAllOopts() ([]portal.Oopt, error) {
+	const op = "storage.postgres.getAllOopts"
+	var oopts []portal.Oopt
+	rows, err := s.db.Query("SELECT name, id FROM zones")
+	if err != nil {
+		return oopts, errors.Errorf("%s - %s", op, err.Error())
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var oopt portal.Oopt
+		err = rows.Scan(&oopt.Name, &oopt.Id)
+		if err != nil {
+			return oopts, errors.Errorf("%s: failed to scan oopt: %s", op, err)
+		}
+		oopts = append(oopts, oopt)
+	}
+	return oopts, nil
+}
+
+func (s *Storage) GetAllRoutesFromZone(zoneID int) ([]portal.Route, error) {
+	const op = "storage.postgres.getAllRoutes"
+	var routes []portal.Route
+	rows, err := s.db.Query("SELECT id, name FROM routes WHERE zone_id = $1", zoneID)
+	if err != nil {
+		return routes, errors.Errorf("%s - %s", op, err.Error())
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var route portal.Route
+		err = rows.Scan(&route.ID, &route.Name)
+		if err != nil {
+			return routes, errors.Errorf("%s: failed to scan route: %s", op, err)
+		}
+		routes = append(routes, route)
+	}
+	return routes, nil
 }
