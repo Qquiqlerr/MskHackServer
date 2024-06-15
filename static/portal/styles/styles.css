@@ -325,3 +325,58 @@ input[type="number"] {
 .calc_button_active:hover {
     background-color: #004d40;
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 20px;
+    padding: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    border: #9ecac0 1px solid;
+
+}
+.reqinfo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 20px;
+    height: 100px;
+    padding: 20px;
+}
+.buttons{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+
+}
+.approve{
+    margin-right: 20px;
+    transition: background-color 0.5s ease;
+    width: 300px;
+    cursor: pointer;
+    text-align: center;
+    padding: 20px 20px;
+    border: #00A551 2px solid;
+}
+.reject{
+    cursor: pointer;
+    width: 300px;
+    transition: background-color 0.5s ease;
+    text-align: center;
+    margin-left: 20px;
+    padding: 20px 20px;
+    border: #ff0000 2px solid;
+}
+.approve:hover{
+    background-color: #00A551;
+}
+.reject:hover{
+    background-color: #ff0000;
+}

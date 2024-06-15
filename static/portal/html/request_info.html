@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о пользователе</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Ecological Monitoring in Kamchatka Krai</h1>
+</header>
+<main class="reqinfo">
+
+    <div class="container">
+        <h2>Информация о пользователе</h2>
+        <div class="user-info">
+            <ul id="userInfo">
+            </ul>
+        </div>
+    </div>
+    <div class="buttons">
+        <div class="approve" onclick="UpdateStatus(3)">
+            <p>Принять</p>
+        </div>
+        <div class="reject" onclick="UpdateStatus(2)">
+            <p>Отклонить</p>
+        </div>
+    </div>
+    <div class="back-button" onclick="goBack()">
+        <p>Назад</p>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2024 SUAI.dev. All rights reserved.</p>
+</footer>
+</body>
+<script>
+    function UpdateStatus(status) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        apiUrl = '/api/portal/change_request_status'
+        fetch(apiUrl, {
+            method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: parseInt(id),
+                status: parseInt(status)
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to mark the problem as resolved.');
+                }
+                window.location.href = `/portal/list_of_requests`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    function goBack() {
+        window.history.back();
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        // Define the API URL
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const apiUrl = '/api/portal/get_user_info?id=' + id;
+        // Fetch the data from the API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const troublesList = document.getElementById('userInfo');
+                const FIO = document.createElement('li');
+                FIO.textContent = `ФИО: ${data.first_name + ' ' + data.last_name + ' ' + data.middle_name}`;
+                troublesList.appendChild(FIO);
+                const citizenship = document.createElement('li');
+                citizenship.textContent = `Гражданство: ${data.citizenship}`;
+                troublesList.appendChild(citizenship);
+                const registration = document.createElement('li');
+                registration.textContent = `Регистрация: ${data.registration_region}`;
+                troublesList.appendChild(registration);
+                if (data.is_male) {
+                    const gender = document.createElement('li');
+                    gender.textContent = `Пол: Мужской`;
+                    troublesList.appendChild(gender);
+                } else {
+                    const gender = document.createElement('li');
+                    gender.textContent = `Пол: Женский`;
+                    troublesList.appendChild(gender);
+                }
+                const passport = document.createElement('li');
+                passport.textContent = `Паспорт: ${data.passport}`;
+                troublesList.appendChild(passport);
+                const email = document.createElement('li');
+                email.textContent = `Почта: ${data.email}`;
+                troublesList.appendChild(email);
+                const phone = document.createElement('li');
+                phone.textContent = `Телефон: ${data.phone}`;
+                troublesList.appendChild(phone);
+                const birthdate = document.createElement('li');
+                birthdate.textContent = `Дата рождения: ${data.date_of_birth}`;
+                troublesList.appendChild(birthdate);
+                const requestedat = document.createElement('li');
+                requestedat.textContent = `Время запроса: ${data.requested_at}`;
+                troublesList.appendChild(requestedat);
+                const visitedat = document.createElement('li');
+                visitedat.textContent = `Время посещения: ${data.visit_date}`;
+                troublesList.appendChild(visitedat);
+                const visitreason = document.createElement('li');
+                visitreason.textContent = `Причина посещения: ${data.visit_reason}`;
+                troublesList.appendChild(visitreason);
+                const visitformat = document.createElement('li');
+                visitformat.textContent = `Формат посещения: ${data.visit_format}`;
+                troublesList.appendChild(visitformat);
+            })
+
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+</html>

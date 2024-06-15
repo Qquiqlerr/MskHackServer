@@ -287,3 +287,24 @@ func (s *Storage) GetAllZonesForDate() ([]portal.ZonesForDate, error) {
 	}
 	return zones, nil
 }
+func (s *Storage) GetUserInfo(id int) (portal.UserInfo, error) {
+	const op = "storage.postgres.getUserInfo"
+	var info portal.UserInfo
+	err := s.db.QueryRow("SELECT requested_at, visit_date, (SELECT name FROM visit_reasons WHERE id = visit_reason), (select name from visit_format WHERE id = visit_format), first_name, last_name, middle_name, citizenship, registration_region, is_male, passport, email, phone, date_of_birth FROM visit_permits WHERE id = $1", id).Scan(
+		&info.RequestedAt, &info.VisitDate, &info.VisitReason, &info.VisitFormat, &info.FirstName,
+		&info.LastName, &info.MiddleName, &info.Citizenship, &info.RegistrationRegion, &info.IsMale, &info.Passport,
+		&info.Email, &info.Phone, &info.DateOfBirth)
+	if err != nil {
+		return info, errors.Errorf("%s - %s", op, err.Error())
+	}
+	return info, nil
+}
+
+func (s *Storage) UpdateRequestStatus(id int, status int) error {
+	const op = "storage.postgres.updateRequestStatus"
+	_, err := s.db.Exec("UPDATE visit_permits SET status = $1 WHERE id = $2", status, id)
+	if err != nil {
+		return errors.Errorf("%s - %s", op, err.Error())
+	}
+	return nil
+}

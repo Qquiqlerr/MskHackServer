@@ -28,7 +28,9 @@
             </ul>
         </div>
     </div>
+
 </main>
+
 <footer>
     <p>&copy; 2024 SUAI.dev. All rights reserved.</p>
 </footer>
@@ -51,10 +53,9 @@
                 requests.forEach(request => {
                     const listItem = document.createElement('li');
                     listItem.classList.add('oopt-name');
-                    listItem.textContent = `${request.route}. Нагрузка: ${Math.round(request.stress)}% + ${Math.round(request.stress_if_submit - request.stress)}%`;
+                    listItem.textContent = `${request.route}. Нагрузка: ${Math.round(request.stress)}% + ~${Math.round(request.stress_if_submit - request.stress)}%`;
                     listItem.addEventListener('click', () => {
-                        localStorage.setItem("ooptID", request.id);
-                        redirectToRoutes(request.id);
+                        window.location.href = `/portal/request_info?id=${request.id}`
                     });
                     troublesList.appendChild(listItem);
 
