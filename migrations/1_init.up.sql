@@ -10,6 +10,7 @@ CREATE TABLE if not exists routes (
                           name TEXT,
                           description TEXT,
                           length_hours float,
+                          lines float ARRAY,
                           stress float DEFAULT 0.0
 );
 

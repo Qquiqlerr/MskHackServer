@@ -33,21 +33,28 @@
         };
         const finalData = {
             route: {
-                id: localStorage.getItem('route_id'),
+                id: parseInt(localStorage.getItem('route_id')),
                 RCC: rccData
             }
         };
         console.log(JSON.stringify(finalData, null, 2));
         // Здесь можно отправить данные на сервер или сохранить их другим способом
-        const apiUrl = 'your_api_url_here';
 
-        fetch(apiUrl, {
-            method: 'POST',
+        fetch('/api/portal/send_route_stress', {
+            method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(finalData)
+            body: JSON.stringify(finalData),
         })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to mark the problem as resolved.');
+                }
+
+                const id = localStorage.getItem('route_id');
+                window.location.href = `/portal/list_of_routes?id=${id}`;
+            })
             .catch(error => {
                 console.error('Error:', error);
             });

@@ -62,6 +62,9 @@ func main() {
 		r.Put("/update_problem", portal.PutProblem(log, storage))
 		r.Get("/get_all_oopts", portal.GetAllOopts(log, storage))
 		r.Get("/get_all_routes", portal.GetAllRoutesFromZone(log, storage))
+		r.Put("/send_route_stress", portal.SendRouteStress(log, storage))
+		r.Put("/send_oopt_stress", portal.SendOOPTStress(log, storage))
+		r.Get("/get_all_requests", portal.GetAllRequests(log, storage))
 	})
 
 	// Define routes under "/portal"
@@ -82,6 +85,7 @@ func main() {
 			r.Get("/page2", static.Page2(log))
 			r.Get("/page3", static.Page3(log))
 		})
+		r.Get("/list_of_requests", static.ListOfRequsets(log))
 	})
 
 	// Create an HTTP server

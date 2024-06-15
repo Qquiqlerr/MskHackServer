@@ -14,8 +14,9 @@ type Response struct {
 	Oopts []Oopt `json:"oopts"`
 }
 type Oopt struct {
-	Name string `json:"name"`
-	Id   int    `json:"id"`
+	Name   string  `json:"name"`
+	Id     int     `json:"id"`
+	Stress float64 `json:"stress"`
 }
 
 func GetAllOopts(log *slog.Logger, getter OoptsGetter) http.HandlerFunc {

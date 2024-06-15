@@ -36,7 +36,7 @@ type User struct {
 	LastName    string `json:"last_name"`
 	MiddleName  string `json:"middle_name"`
 	DateOfBirth string `json:"date_of_birth"`
-	Citizenship string `json:"sitizenship"`
+	Citizenship string `json:"citizenship"`
 	Region      string `json:"region"`
 	IsMale      bool   `json:"is_male"`
 	Passport    string `json:"passport"`
@@ -48,7 +48,6 @@ type RequestData struct {
 	Users         []User   `json:"users"`
 	VisitDate     string   `json:"visit_date"`
 	RouteID       int      `json:"route_id"`
-	TypeOfVisit   string   `json:"type_of_visit"`
 	FormatOfVisit string   `json:"format_of_visit"`
 	Reason        string   `json:"reason"`
 	Photo         []string `json:"photo"`

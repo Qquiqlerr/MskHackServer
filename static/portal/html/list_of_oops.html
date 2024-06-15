@@ -14,9 +14,9 @@
     <div class="panel-section">
         <nav>
             <ul>
-                <li><a href="#">Enter Information</a></li>
-                <li><a href="/portal/troubles">Environmental Issues</a></li>
-                <li><a href="#">Grant Access</a></li>
+                <li><a href="#">Рассчитать нагрузку</a></li>
+                <li><a href="/portal/troubles">Экопроишествия</a></li>
+                <li><a href="#">Выдача разрешений</a></li>
             </ul>
         </nav>
     </div>
@@ -30,7 +30,7 @@
     </div>
 </main>
 <footer>
-    <p>&copy; 2023 Ecological Monitoring. All rights reserved.</p>
+    <p>&copy; 2024 SUAI.dev. All rights reserved.</p>
 </footer>
 <script>
     function redirectToRoutes(id) {
@@ -59,10 +59,16 @@
 
                     // Set the name of the OOPT
                     const name = document.createElement('span');
-                    name.textContent = oopt.name;
+                    if (oopt.stress !== 0){
+                        name.textContent = `${oopt.name} (предельная нагрузка - ${oopt.stress} чел/день)`;
+                    }
+                    else{
+                        name.textContent = oopt.name;
+                    }
                     name.className = 'oopt-name';
                     tile.appendChild(name);
                     tile.addEventListener('click', () => {
+                        localStorage.setItem("ooptID", oopt.id);
                         redirectToRoutes(oopt.id);
                     });
                     // Create a list item element for the tile

@@ -18,12 +18,9 @@
     </div>
     <div class="content">
         <h2>Введите данные:</h2>
-        <label>Длина однодневного туристического маршрута или однодневного участка многодневного туристического маршрута, км <input type="number" id="dt" step="0.01"></label>
         <label>Оптимальное расстояние между группами на участке туристического маршрута, км <input type="number" id="dg" step="0.01"></label>
         <label>Длина светового дня или количество времени когда туристический маршрут доступен для посетителей, часов <input type="number" id="ts" step="0.01"></label>
-        <label>Среднее время прохождения участка туристического маршрута с учетом остановок, часов <input type="number" id="td" step="0.01"></label>
         <label>Среднее количество человек в группе(включая сопровождающих), чел <input type="number" id="gs" step="0.01"></label>
-        <label>Количество дней пребывания посетителей на туристском маршруте, единиц <input type="number" id="t" step="0.01"></label>
         <button onclick="collectData()">Далее</button>
     </div>
     <div class="back-button" onclick="goBack()">
@@ -37,13 +34,9 @@
     function collectData() {
         const data = {
             BCC: {
-                dt: parseFloat(document.getElementById('dt').value),
                 dg: parseFloat(document.getElementById('dg').value),
                 ts: parseFloat(document.getElementById('ts').value),
-                td: parseFloat(document.getElementById('td').value),
                 gs: parseFloat(document.getElementById('gs').value),
-                p: parseInt(localStorage.getItem('route_id')),
-                t: parseFloat(document.getElementById('t').value)
             }
         };
         localStorage.setItem('bccData', JSON.stringify(data));

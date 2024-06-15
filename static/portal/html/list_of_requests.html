@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecological Monitoring</title>
+    <link rel="stylesheet" href="/static/portal/styles/styles.css">
+</head>
+<body>
+<header>
+    <h1>Ecological Monitoring in Kamchatka Krai</h1>
+</header>
+<main>
+    <div class="panel-section">
+        <nav>
+            <ul>
+                <li><a href="/portal/list_of_oopts">Рассчитать нагрузку</a></li>
+                <li><a href="/portal/troubles">Экопроишествия</a></li>
+                <li><a href="#">Выдача разрешений</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="request-section">
+        <h2>Выберите запрос</h2>
+        <div class="request-list">
+            <ul id="troublesList">
+                <!-- Placeholder for the list items -->
+            </ul>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2024 SUAI.dev. All rights reserved.</p>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Define the API URL
+        const apiUrl = '/api/portal/get_all_requests';
+
+        // Fetch the data from the API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Get the list element
+                const troublesList = document.getElementById('troublesList');
+                var requests = data.requests
+                // Clear the list
+                troublesList.innerHTML = '';
+
+                // Create list items for each request
+                requests.forEach(request => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('oopt-name');
+                    listItem.textContent = `${request.route}. Нагрузка: ${Math.round(request.stress)}% + ${Math.round(request.stress_if_submit - request.stress)}%`;
+                    listItem.addEventListener('click', () => {
+                        localStorage.setItem("ooptID", request.id);
+                        redirectToRoutes(request.id);
+                    });
+                    troublesList.appendChild(listItem);
+
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+</body>
+</html>

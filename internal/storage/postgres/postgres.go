@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"greenkmchSever/internal/http-server/handlers/app"
 	"greenkmchSever/internal/http-server/handlers/portal"
@@ -49,6 +50,15 @@ func (s *Storage) GetAllRoutes() ([]app.Routes, error) {
 	return routes, nil
 }
 
+// AddVisitRequest adds a visit request to the storage.
+//
+// It takes a data parameter of type app.RequestData, which contains the details of the visit request.
+// The function scans the visit_reasons and visit_format tables to get the ReasonID and FormatOfVisitID.
+// If there is only one user in the data.Users slice, the function inserts the visit request into the visit_permits table.
+// Otherwise, it inserts the visit request into the group_permits table and then inserts each user's visit request into the visit_permits table.
+// For each user, it also inserts the photo_types into the visit_permits_photo_types table.
+//
+// Returns an error if any database query fails.
 func (s *Storage) AddVisitRequest(data app.RequestData) error {
 	const op = "storage.postgres.addVisitRequest"
 	var GroupID int64
@@ -173,14 +183,14 @@ func (s *Storage) UpdateProblem(id int64, newStatus string) error {
 func (s *Storage) GetAllOopts() ([]portal.Oopt, error) {
 	const op = "storage.postgres.getAllOopts"
 	var oopts []portal.Oopt
-	rows, err := s.db.Query("SELECT name, id FROM zones")
+	rows, err := s.db.Query("SELECT name, id, stress FROM zones")
 	if err != nil {
 		return oopts, errors.Errorf("%s - %s", op, err.Error())
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var oopt portal.Oopt
-		err = rows.Scan(&oopt.Name, &oopt.Id)
+		err = rows.Scan(&oopt.Name, &oopt.Id, &oopt.Stress)
 		if err != nil {
 			return oopts, errors.Errorf("%s: failed to scan oopt: %s", op, err)
 		}
@@ -192,18 +202,88 @@ func (s *Storage) GetAllOopts() ([]portal.Oopt, error) {
 func (s *Storage) GetAllRoutesFromZone(zoneID int) ([]portal.Route, error) {
 	const op = "storage.postgres.getAllRoutes"
 	var routes []portal.Route
-	rows, err := s.db.Query("SELECT id, name FROM routes WHERE zone_id = $1", zoneID)
+	rows, err := s.db.Query("SELECT id, name, stress FROM routes WHERE zone_id = $1", zoneID)
 	if err != nil {
 		return routes, errors.Errorf("%s - %s", op, err.Error())
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var route portal.Route
-		err = rows.Scan(&route.ID, &route.Name)
+		err = rows.Scan(&route.ID, &route.Name, &route.Stress)
 		if err != nil {
 			return routes, errors.Errorf("%s: failed to scan route: %s", op, err)
 		}
 		routes = append(routes, route)
 	}
 	return routes, nil
+}
+
+func (s *Storage) GetRouteLines(id int) ([]float64, error) {
+	const op = "storage.postgres.getRouteLines"
+	var lines []float64
+	s.db.QueryRow("SELECT lines FROM routes WHERE id = $1", id).Scan(
+		pq.Array(&lines),
+	)
+	return lines, nil
+}
+
+func (s *Storage) SendRouteStress(id int, stress float64) error {
+	const op = "storage.postgres.sendRouteStress"
+	_, err := s.db.Exec("UPDATE routes SET stress = $1 WHERE id = $2", stress, id)
+	if err != nil {
+		return errors.Errorf("%s - %s", op, err.Error())
+	}
+	return nil
+}
+
+func (s *Storage) SendOOPTStress(stress float64, ID int) error {
+	const op = "storage.postgres.sendOOPTStress"
+	_, err := s.db.Exec("UPDATE zones SET stress = $1 where id = $2", stress, ID)
+	if err != nil {
+		return errors.Errorf("%s - %s", op, err.Error())
+	}
+	return nil
+}
+
+func (s *Storage) GetAllZonesForDate() ([]portal.ZonesForDate, error) {
+	const op = "storage.postgres.getAllZonesForDate"
+	var zones []portal.ZonesForDate
+	rows, err := s.db.Query("SELECT id, visit_date, route_id FROM visit_permits where status = 1")
+	if err != nil {
+		return zones, errors.Errorf("%s - %s", op, err.Error())
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			id          int64
+			visitDate   time.Time
+			routeID     int
+			count       int
+			stress      float64
+			routeString string
+		)
+		err = rows.Scan(&id, &visitDate, &routeID)
+		if err != nil {
+			return zones, errors.Errorf("%s: failed to scan zone: %s", op, err)
+		}
+
+		err = s.db.QueryRow("SELECT COUNT(*) from visit_permits WHERE status = 3 AND visit_date = $1 AND route_id = $2", visitDate, routeID).Scan(&count)
+		if err != nil {
+			return zones, errors.Errorf("%s: failed to scan count: %s", op, err)
+		}
+		err = s.db.QueryRow("SELECT stress from routes WHERE id = $1", routeID).Scan(&stress)
+		if err != nil {
+			return zones, errors.Errorf("%s: failed to scan stress: %s", op, err)
+		}
+		err = s.db.QueryRow("SELECT name from routes WHERE id = $1", routeID).Scan(&routeString)
+		currStress := float64(count) / stress * 100.0
+		stressIfSubmit := float64(count+1) / stress * 100.0
+		zones = append(zones, portal.ZonesForDate{
+			ID:             id,
+			Route:          routeString,
+			Stress:         currStress,
+			StressIfSubmit: stressIfSubmit,
+		})
+	}
+	return zones, nil
 }

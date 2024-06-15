@@ -11,8 +11,9 @@ type RoutesGetter interface {
 	GetAllRoutesFromZone(zoneID int) ([]Route, error)
 }
 type Route struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID     int     `json:"id"`
+	Name   string  `json:"name"`
+	Stress float64 `json:"stress"`
 }
 type Resp struct {
 	Routes []Route `json:"routes"`

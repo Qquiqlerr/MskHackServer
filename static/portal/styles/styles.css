@@ -2,14 +2,14 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
+    background-color: #f8f8f8;
     display: flex;
     flex-direction: column;
     height: 100vh;
 }
 
 header {
-    background-color: #00796b;
+    background-color: #00A551;
     padding: 20px;
     text-align: center;
     color: #ffffff;
@@ -48,7 +48,7 @@ main {
 
 .panel-section nav ul li a {
     text-decoration: none;
-    color: #00796b;
+    color: #00A551;
     font-weight: bold;
     transition: color 0.3s ease;
 }
@@ -73,6 +73,8 @@ main {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 600px;
+    margin-bottom: 20px;
+    line-height: 2;
 }
 
 .styled-table {
@@ -87,7 +89,7 @@ main {
 }
 
 .styled-table th {
-    background-color: #00796b;
+    background-color: #00A551;
     color: #ffffff;
 }
 
@@ -104,7 +106,7 @@ main {
 footer {
     text-align: center;
     padding: 20px;
-    background-color: #00796b;
+    background-color: #00A551;
     color: #ffffff;
 }
 
@@ -123,7 +125,7 @@ footer {
 
 .welcome-section h2 {
     text-align: center;
-    color: #00796b;
+    color: #00A551;
     margin-bottom: 40px;
 }
 
@@ -150,7 +152,7 @@ footer {
 }
 
 .tile h3 {
-    color: #00796b;
+    color: #00A551;
     margin-bottom: 10px;
 }
 /* Popup Modal Styles */
@@ -212,7 +214,7 @@ footer {
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: #00796b;
+    background-color: #00A551;
     color: #ffffff;
     transition: background-color 0.3s ease;
 }
@@ -285,5 +287,41 @@ input[type="number"] {
 }
 
 .square.filled {
-    background-color: #00796b;
+    background-color: #00A551;
+}
+
+.calc_button_inactive {
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: not-allowed;
+    border: none;
+    border-radius: 5px;
+    background-color: #00A551;
+    color: #ffffff;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    width: 20%;
+}
+.calc_button_active{
+
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #00A551;
+    color: #ffffff;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    width: 20%;
+}
+.calc_button_active:hover {
+    background-color: #004d40;
 }

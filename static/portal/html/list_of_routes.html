@@ -19,19 +19,27 @@
                 <!-- Placeholder for the list items -->
             </ul>
         </div>
+        <div>
+            <p>После того, как вы заполните все маршруты, нажмите кнопку ниже, для рассчета рекреационной емкости ООПТ</p>
+            <div class="calc_button_inactive" id="calc_button">
+                <p>Рассчитать</p>
+            </div>
+        </div>
     </div>
     <div class="back-button" onclick="goBack()">
         <p>Назад</p>
     </div>
+
 </main>
 
 <footer>
-    <p>&copy; 2023 Ecological Monitoring. All rights reserved.</p>
+    <p>&copy; 2024 SUAI.dev. All rights reserved.</p>
 </footer>
 
 <script>
+
     function goBack() {
-        window.history.back();
+        window.location.href = '/portal/list_of_oopts';
     }
     document.addEventListener('DOMContentLoaded', () => {
         // Define the API URL
@@ -39,6 +47,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         const apiUrl = `/api/portal/get_all_routes?id=${id}`;
+        const CalcButton = document.getElementById('calc_button');
         // Fetch the data from the API
         fetch(apiUrl)
             .then(response => response.json())
@@ -48,7 +57,8 @@
 
                 // Create the container element for the list
                 const container = document.getElementById('routesList');
-
+                let isFull = true;
+                let OOPTStress = 0;
                 // Loop through the list and create the route items
                 routes.forEach(route => {
                     // Create a list item element for the route
@@ -56,7 +66,14 @@
 
                     // Set the name of the route
                     const name = document.createElement('span');
-                    name.textContent = route.name;
+                    if (route.stress === 0) {
+                        name.textContent = route.name;
+                        isFull = false;
+                    } else {
+                        isFull = true;
+                        OOPTStress += route.stress;
+                        name.textContent = `${route.name} (Значение уже рассчитано - ${Math.floor(route.stress)} чел/день)`;
+                    }
                     name.className = 'oopt-name';
                     listItem.appendChild(name);
                     listItem.addEventListener('click', () => {
@@ -66,6 +83,28 @@
                     // Add the list item to the container
                     container.appendChild(listItem);
                 });
+
+                if (isFull) {
+                    CalcButton.classList.add(`calc_button_active`);
+                    CalcButton.addEventListener('click', () => {
+                        fetch('/api/portal/send_oopt_stress', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({stress: parseInt(OOPTStress), zone_id:parseInt(id)}),
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to mark the problem as resolved.');
+                            }
+                            window.location.href = `/portal/list_of_oopts`;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+
+                    });
+                }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -73,6 +112,10 @@
         // Navigates to the previous page in the window's history.
 
     });
+    function areAllElementsNonZero(container) {
+        const elements = Array.from(container.getElementsByTagName('input'));
+        return elements.every(element => element.value !== '0' && element.value !== '');
+    }
 </script>
 </body>
 </html>
