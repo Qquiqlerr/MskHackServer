@@ -1,6 +1,6 @@
-# GreenkmchSever
+# Green Kamchatka Server
 
-GreenkmchSever is a web application that provides a platform for reporting and managing environmental problems. It
+Green kamchatka is a web application that provides a platform for reporting and managing environmental problems. It
 allows users to send reports of various types of environmental issues, and administrators can view and manage these
 reports.
 
