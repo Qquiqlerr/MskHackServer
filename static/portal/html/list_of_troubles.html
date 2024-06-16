@@ -17,7 +17,7 @@
             <ul>
                 <li><a href="/portal/list_of_oopts">Рассчитать нагрузку</a></li>
                 <li><a href="#">Экопроишествия</a></li>
-                <li><a href="#">Выдача разрешений</a></li>
+                <li><a href="/portal/list_of_requests">Выдача разрешений</a></li>
             </ul>
         </nav>
     </div>
@@ -75,7 +75,7 @@
             } catch (error) {
                 console.error('Fetch error:', error);
                 const requestListDiv = document.querySelector('.request-list');
-                requestListDiv.innerText = 'Ошибка при загрузке данных.';
+                requestListDiv.innerText = 'Данные отсутствуют.';
             }
         }
 
