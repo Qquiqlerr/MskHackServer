@@ -1,15 +1,26 @@
 -- Disable foreign key constraints
-ALTER TABLE route_features DROP CONSTRAINT IF EXISTS route_features_route_id_fkey;
-ALTER TABLE route_features DROP CONSTRAINT IF EXISTS route_features_feature_id_fkey;
-ALTER TABLE visit_permits DROP CONSTRAINT IF EXISTS visit_permits_route_id_fkey;
-ALTER TABLE visit_permits DROP CONSTRAINT IF EXISTS visit_permits_group_id_fkey;
-ALTER TABLE visit_permits DROP CONSTRAINT IF EXISTS visit_permits_visit_reason_fkey;
-ALTER TABLE visit_permits DROP CONSTRAINT IF EXISTS visit_permits_visit_format_fkey;
-ALTER TABLE visit_permits DROP CONSTRAINT IF EXISTS visit_permits_status_fkey;
-ALTER TABLE visit_permits_photo_types DROP CONSTRAINT IF EXISTS visit_permits_photo_types_visit_permit_id_fkey;
-ALTER TABLE visit_permits_photo_types DROP CONSTRAINT IF EXISTS visit_permits_photo_types_photo_type_id_fkey;
-ALTER TABLE reports DROP CONSTRAINT IF EXISTS reports_type_fkey;
-ALTER TABLE reports DROP CONSTRAINT IF EXISTS reports_statusID_fkey;
+ALTER TABLE route_features
+    DROP CONSTRAINT IF EXISTS route_features_route_id_fkey;
+ALTER TABLE route_features
+    DROP CONSTRAINT IF EXISTS route_features_feature_id_fkey;
+ALTER TABLE visit_permits
+    DROP CONSTRAINT IF EXISTS visit_permits_route_id_fkey;
+ALTER TABLE visit_permits
+    DROP CONSTRAINT IF EXISTS visit_permits_group_id_fkey;
+ALTER TABLE visit_permits
+    DROP CONSTRAINT IF EXISTS visit_permits_visit_reason_fkey;
+ALTER TABLE visit_permits
+    DROP CONSTRAINT IF EXISTS visit_permits_visit_format_fkey;
+ALTER TABLE visit_permits
+    DROP CONSTRAINT IF EXISTS visit_permits_status_fkey;
+ALTER TABLE visit_permits_photo_types
+    DROP CONSTRAINT IF EXISTS visit_permits_photo_types_visit_permit_id_fkey;
+ALTER TABLE visit_permits_photo_types
+    DROP CONSTRAINT IF EXISTS visit_permits_photo_types_photo_type_id_fkey;
+ALTER TABLE reports
+    DROP CONSTRAINT IF EXISTS reports_type_fkey;
+ALTER TABLE reports
+    DROP CONSTRAINT IF EXISTS reports_statusID_fkey;
 -- Drop tables in the correct order
 DROP TABLE IF EXISTS route_features;
 DROP TABLE IF EXISTS visit_permits;

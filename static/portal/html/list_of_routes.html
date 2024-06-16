@@ -20,7 +20,8 @@
             </ul>
         </div>
         <div>
-            <p>После того, как вы заполните все маршруты, нажмите кнопку ниже, для рассчета рекреационной емкости ООПТ</p>
+            <p>После того, как вы заполните все маршруты, нажмите кнопку ниже, для рассчета рекреационной емкости
+                ООПТ</p>
             <div class="calc_button_inactive" id="calc_button">
                 <p>Рассчитать</p>
             </div>
@@ -41,6 +42,7 @@
     function goBack() {
         window.location.href = '/portal/list_of_oopts';
     }
+
     document.addEventListener('DOMContentLoaded', () => {
         // Define the API URL
 
@@ -92,16 +94,16 @@
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({stress: parseInt(OOPTStress), zone_id:parseInt(id)}),
+                            body: JSON.stringify({stress: parseInt(OOPTStress), zone_id: parseInt(id)}),
                         }).then(response => {
                             if (!response.ok) {
                                 throw new Error('Failed to mark the problem as resolved.');
                             }
                             window.location.href = `/portal/list_of_oopts`;
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
 
                     });
                 }
@@ -112,6 +114,7 @@
         // Navigates to the previous page in the window's history.
 
     });
+
     function areAllElementsNonZero(container) {
         const elements = Array.from(container.getElementsByTagName('input'));
         return elements.every(element => element.value !== '0' && element.value !== '');

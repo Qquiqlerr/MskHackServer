@@ -155,6 +155,7 @@ footer {
     color: #00A551;
     margin-bottom: 10px;
 }
+
 /* Popup Modal Styles */
 .modal {
     display: none; /* Скрыть модальное окно по умолчанию */
@@ -222,6 +223,7 @@ footer {
 .modal-buttons button:hover {
     background-color: #004d40;
 }
+
 .oopts-list {
     display: flex;
     flex-wrap: wrap;
@@ -240,6 +242,7 @@ footer {
     bottom: 20px;
     right: 20px;
 }
+
 .back-button:hover {
     background-color: lightblue;
 }
@@ -247,6 +250,7 @@ footer {
 .oopt-name {
     cursor: pointer;
 }
+
 .oopt-name:hover {
     text-decoration: underline;
 }
@@ -270,6 +274,7 @@ input[type="number"] {
     width: 100%;
     box-sizing: border-box;
 }
+
 .squares-container {
     position: fixed;
     top: 50%;
@@ -306,7 +311,8 @@ input[type="number"] {
     text-align: center;
     width: 20%;
 }
-.calc_button_active{
+
+.calc_button_active {
 
     position: absolute;
     left: 50%;
@@ -322,6 +328,7 @@ input[type="number"] {
     text-align: center;
     width: 20%;
 }
+
 .calc_button_active:hover {
     background-color: #004d40;
 }
@@ -338,7 +345,8 @@ input[type="number"] {
     border: #9ecac0 1px solid;
 
 }
-.reqinfo{
+
+.reqinfo {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -347,7 +355,8 @@ input[type="number"] {
     height: 100px;
     padding: 20px;
 }
-.buttons{
+
+.buttons {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -356,7 +365,8 @@ input[type="number"] {
 
 
 }
-.approve{
+
+.approve {
     margin-right: 20px;
     transition: background-color 0.5s ease;
     width: 300px;
@@ -365,7 +375,8 @@ input[type="number"] {
     padding: 20px 20px;
     border: #00A551 2px solid;
 }
-.reject{
+
+.reject {
     cursor: pointer;
     width: 300px;
     transition: background-color 0.5s ease;
@@ -374,9 +385,11 @@ input[type="number"] {
     padding: 20px 20px;
     border: #ff0000 2px solid;
 }
-.approve:hover{
+
+.approve:hover {
     background-color: #00A551;
 }
-.reject:hover{
+
+.reject:hover {
     background-color: #ff0000;
 }

@@ -64,6 +64,7 @@
         const modal = document.getElementById('modal');
         const span = document.querySelector('.close');
         let currentProblemId = null;
+
         async function fetchProblems() {
             try {
                 const response = await fetch(apiUrl);
@@ -117,7 +118,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ id: parseInt(currentProblemId), new_status: 'Устранено' }),
+                    body: JSON.stringify({id: parseInt(currentProblemId), new_status: 'Устранено'}),
                 })
                     .then(response => {
                         if (!response.ok) {
@@ -133,13 +134,13 @@
             });
 
             document.getElementById('denied').addEventListener('click', () => {
-                console.log(JSON.stringify({ id: currentProblemId, new_status: 'Отклонено' }))
+                console.log(JSON.stringify({id: currentProblemId, new_status: 'Отклонено'}))
                 fetch('/api/portal/update_problem', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ id: parseInt(currentProblemId), new_status: 'Отклонено' }),
+                    body: JSON.stringify({id: parseInt(currentProblemId), new_status: 'Отклонено'}),
                 })
 
                     .then(response => {
@@ -156,7 +157,6 @@
             });
 
         }
-
 
 
         fetchProblems();

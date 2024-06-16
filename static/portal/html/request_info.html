@@ -43,7 +43,7 @@
         apiUrl = '/api/portal/change_request_status'
         fetch(apiUrl, {
             method: 'PUT',
-                headers: {
+            headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -61,9 +61,11 @@
                 console.error('Error:', error);
             });
     }
+
     function goBack() {
         window.history.back();
     }
+
     document.addEventListener('DOMContentLoaded', () => {
         // Define the API URL
 

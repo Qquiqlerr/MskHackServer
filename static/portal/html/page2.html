@@ -36,9 +36,11 @@
             document.getElementById('coefficients').removeChild(inputs[inputs.length - 1]);
         }
     }
+
     function goBack() {
         window.history.back();
     }
+
     function addCoefficient() {
         const input = document.createElement('input');
         input.type = 'number';
@@ -58,6 +60,7 @@
         localStorage.setItem('pccData', JSON.stringify(pccData));
         window.location.href = `/portal/info/page3`;
     }
+
     function fillSquares(pageNumber) {
         const squares = document.querySelectorAll('.square');
 
@@ -69,6 +72,7 @@
             }
         });
     }
+
     fillSquares(2);
 </script>
 </body>

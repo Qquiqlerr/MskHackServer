@@ -18,9 +18,12 @@
     </div>
     <div class="content">
         <h2>Введите данные:</h2>
-        <label>Оптимальное расстояние между группами на участке туристического маршрута, км <input type="number" id="dg" step="0.01"></label>
-        <label>Длина светового дня или количество времени когда туристический маршрут доступен для посетителей, часов <input type="number" id="ts" step="0.01"></label>
-        <label>Среднее количество человек в группе(включая сопровождающих), чел <input type="number" id="gs" step="0.01"></label>
+        <label>Оптимальное расстояние между группами на участке туристического маршрута, км <input type="number" id="dg"
+                                                                                                   step="0.01"></label>
+        <label>Длина светового дня или количество времени когда туристический маршрут доступен для посетителей, часов
+            <input type="number" id="ts" step="0.01"></label>
+        <label>Среднее количество человек в группе(включая сопровождающих), чел <input type="number" id="gs"
+                                                                                       step="0.01"></label>
         <button onclick="collectData()">Далее</button>
     </div>
     <div class="back-button" onclick="goBack()">
@@ -31,6 +34,7 @@
     function goBack() {
         window.history.back();
     }
+
     function collectData() {
         const data = {
             BCC: {
@@ -42,6 +46,7 @@
         localStorage.setItem('bccData', JSON.stringify(data));
         window.location.href = `/portal/info/page2`;
     }
+
     function fillSquares(pageNumber) {
         const squares = document.querySelectorAll('.square');
 

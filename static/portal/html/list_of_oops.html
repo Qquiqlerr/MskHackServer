@@ -36,6 +36,7 @@
     function redirectToRoutes(id) {
         window.location.href = `/portal/list_of_routes?id=${id}`;
     }
+
     document.addEventListener('DOMContentLoaded', () => {
         // Define the API URL
         const apiUrl = '/api/portal/get_all_oopts';
@@ -59,10 +60,9 @@
 
                     // Set the name of the OOPT
                     const name = document.createElement('span');
-                    if (oopt.stress !== 0){
+                    if (oopt.stress !== 0) {
                         name.textContent = `${oopt.name} (предельная нагрузка - ${oopt.stress} чел/день)`;
-                    }
-                    else{
+                    } else {
                         name.textContent = oopt.name;
                     }
                     name.className = 'oopt-name';
