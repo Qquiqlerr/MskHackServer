@@ -1,2 +1,2 @@
-address: localhost:8082
-database_url: postgresql://postgres:157315@localhost:5432/greenKamchatka
+address: 
+database_url: 
