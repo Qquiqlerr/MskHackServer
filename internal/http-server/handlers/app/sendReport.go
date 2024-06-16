@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
 	"io"
@@ -74,10 +73,9 @@ func ReadFormData(r *http.Request) (Report, error) {
 	TypeOfReport = r.FormValue("type")
 	Location = r.FormValue("location")
 	Comment = r.FormValue("comment")
-	fmt.Println(r.FormValue("time"))
 	i, err := strconv.ParseInt(r.FormValue("time"), 10, 64)
 	if err != nil {
-		return report, errors.Errorf("%s: failed parsing time", op)
+		return report, errors.Errorf("%s: failed parsing time: %s", op, err.Error())
 	}
 	Time = time.Unix(i, 0)
 	Phone = r.FormValue("phone")
