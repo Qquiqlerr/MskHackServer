@@ -72,6 +72,7 @@ func SendVisitRequest(log *slog.Logger, adder RequestAdder) http.HandlerFunc {
 			render.JSON(w, r, resp)
 			return
 		}
+		log.Info("request data", data)
 		if len(data.Users) < 1 {
 			log.Error("no users found")
 			render.Status(r, http.StatusBadRequest)
