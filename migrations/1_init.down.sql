@@ -21,6 +21,8 @@ ALTER TABLE reports
     DROP CONSTRAINT IF EXISTS reports_type_fkey;
 ALTER TABLE reports
     DROP CONSTRAINT IF EXISTS reports_statusID_fkey;
+ALTER TABLE visit_permits_photo_types
+    DROP CONSTRAINT IF EXISTS visit_permits_photo_types_pkey;
 -- Drop tables in the correct order
 DROP TABLE IF EXISTS route_features;
 DROP TABLE IF EXISTS visit_permits;
@@ -35,5 +37,6 @@ DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS zones;
 DROP TABLE IF EXISTS type_of_reports;
 DROP TABLE IF EXISTS reports_statuses;
+DROP TABLE IF EXISTS visit_permits_photo_types;
 
 

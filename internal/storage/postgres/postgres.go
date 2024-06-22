@@ -104,7 +104,7 @@ func (s *Storage) AddVisitRequest(data app.RequestData) error {
 			if err != nil {
 				return errors.Errorf("%s: failed to insert visit request: %s", op, err)
 			}
-			fmt.Println(data.Photo)
+			fmt.Println(data.Photo[0])
 			for _, photoType := range data.Photo {
 				_, err = s.db.Exec(`INSERT INTO visit_permits_photo_types (visit_permit_id, photo_type_id)
                 VALUES ($1, (SELECT id FROM photo_types WHERE name = $2))`, ID, photoType)
