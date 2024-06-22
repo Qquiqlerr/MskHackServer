@@ -27,9 +27,11 @@ func GetAllRequests(log *slog.Logger, zonesGetter ZonesGetter) http.HandlerFunc 
 		log := log.With(slog.String("op", op))
 
 		requests, err := zonesGetter.GetAllZonesForDate()
+		log.Info("get zones", "err", err, "requests", requests)
 		if err != nil {
 			log.Error("failed to get zones", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, ResponseRequest{})
 			return
 		}
 

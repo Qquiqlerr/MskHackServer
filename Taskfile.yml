@@ -16,5 +16,10 @@ tasks:
 
     desc: run application
     cmd: go run ./cmd/main.go --config={{.config}}
-
+  rebuild:
+    cmds:
+      - rm ./main
+      - go build ./cmd/main.go
+  run_build:
+    cmd: sudo ./main --config=./config/config.yaml
 version: '3'
