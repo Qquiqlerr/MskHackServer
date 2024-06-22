@@ -75,9 +75,19 @@ func (s *Storage) AddVisitRequest(data app.RequestData) error {
 
 	if len(data.Users) == 1 {
 		GroupID = -1
-		_, err = s.db.Exec(`INSERT INTO visit_permits (status, requested_at, route_id, visit_date, group_id, visit_reason, visit_format, first_name, last_name, middle_name, citizenship, registration_region, is_male, passport, email, phone, date_of_birth) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,$17)`,
+		err = s.db.QueryRow(`INSERT INTO visit_permits (status, requested_at, route_id, visit_date, group_id, visit_reason, visit_format, first_name, last_name, middle_name, citizenship, registration_region, is_male, passport, email, phone, date_of_birth) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,$17) returning id`,
 			1, time.Now(), data.RouteID, data.VisitDate, GroupID, ReasonID, FormatOfVisitID, data.Users[0].FirstName, data.Users[0].LastName, data.Users[0].MiddleName, data.Users[0].Citizenship, data.Users[0].Region, data.Users[0].IsMale, data.Users[0].Passport, data.Users[0].Email, data.Users[0].Phone, data.Users[0].DateOfBirth,
-		)
+		).Scan(&GroupID)
+		if err != nil {
+			return errors.Errorf("%s: failed to insert visit request: %s", op, err)
+		}
+		for _, photoType := range data.Photo {
+			_, err = s.db.Exec(`INSERT INTO visit_permits_photo_types (visit_permit_id, photo_type_id)
+                VALUES ($1, (SELECT id FROM photo_types WHERE name = $2))`, GroupID, photoType)
+			if err != nil {
+				return errors.Errorf("%s: failed to insert visit request: %s", op, err)
+			}
+		}
 
 	} else {
 		err := s.db.QueryRow("INSERT INTO group_permits DEFAULT VALUES RETURNING id").Scan(&GroupID)
@@ -155,7 +165,7 @@ func (s *Storage) GetAllReports() ([]app.ReportCutted, error) {
 func (s *Storage) GetProblems() (portal.Problems, error) {
 	const op = "storage.postgres.getAllProblems"
 	var problems portal.Problems
-	rows, err := s.db.Query("SELECT r.id, rt.name, rs.name, comment from reports as r join reports_statuses as rs on r.statusID = rs.id  join type_of_reports as rt on r.type = rt.id where r.statusID = 1")
+	rows, err := s.db.Query(`SELECT r.id, rt.name, rs.name, comment from reports as r join reports_statuses as rs on r.statusID = rs.id  join type_of_reports as rt on r.type = rt.id where r.statusID = 1`)
 	if err != nil {
 		return problems, errors.Errorf("%s - %s", op, err.Error())
 	}
