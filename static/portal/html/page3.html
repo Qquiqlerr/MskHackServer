@@ -48,6 +48,9 @@
             body: JSON.stringify(finalData),
         })
             .then(response => {
+                if (response.status === 0) {
+                    throw new Error('NS_BINDING_ABORTED error occurred.');
+                }
                 if (!response.ok) {
                     throw new Error('Failed to mark the problem as resolved.');
                 }

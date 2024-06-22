@@ -27,7 +27,7 @@ func main() {
 		log.Error("Failed to initialize storage", err.Error())
 		os.Exit(1)
 	}
-	cors := cors.New(cors.Options{
+	cor := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
@@ -36,7 +36,7 @@ func main() {
 	})
 
 	router := chi.NewRouter()
-	router.Use(cors.Handler)
+	router.Use(cor.Handler)
 	// Serve static files from the "./static" directory
 	fs := http.FileServer(http.Dir("./static"))
 	router.Handle("/static/*", http.StripPrefix("/static", fs))
