@@ -92,3 +92,7 @@ INSERT INTO reports_statuses(id, name)
 VALUES (2, 'Отклонено');
 INSERT INTO reports_statuses(id, name)
 VALUES (3, 'Устранено');
+
+--group_permits
+INSERT INTO group_permits(id)
+VALUES (-1);
